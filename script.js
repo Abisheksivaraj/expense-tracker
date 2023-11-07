@@ -6,6 +6,8 @@ const amountEl = document.querySelector(".amount");
 
 const incomeEl = document.querySelector(".inc-amt");
 
+const expenseEl = document.querySelector(".amt");
+
 const spentEl = document.querySelector(".salary");
 
 const descriptionEl = document.querySelector(".type");
@@ -30,9 +32,12 @@ function config() {
 // adding data
 function addingDataToDom() {
   transEl.innerHTML = "";
-  transactionData.forEach((ele) => {
-    listDataToDom(ele);
-  });
+  if (transactionData.length > 0) {
+    transactionData.forEach((ele) => {
+      listDataToDom(ele);
+    });
+    calcBalance();
+  }
 }
 
 // deleting data
@@ -40,8 +45,23 @@ function deleteList(id) {
   transactionData = transactionData.filter((ele) => {
     return ele.id != id;
   });
+  calcBalance();
   addingDataToDom();
 }
+
+// calculates total, income, expense
+const calcBalance = () => {
+  let income = transactionData
+    .filter((ele) => ele.amount > 0)
+    .reduce((prev, ele) => (prev += Number(ele.amount)), 0);
+  let expense = transactionData
+    .filter((ele) => ele.amount < 0)
+    .reduce((prev, ele) => (prev += Number(ele.amount)), 0);
+  let balance = income + expense;
+  incomeEl.innerText = `₹ ${income.toFixed(2)}`;
+  expenseEl.innerText = `₹ ${expense .toFixed(2)*-1}`;
+  amountEl.innerText = `₹ ${balance.toFixed(2)}`;
+};
 
 // adding data to dom
 function listDataToDom(obj) {
